@@ -1,4 +1,4 @@
-import webpy.web as web
+import web
 import hdhomerun as hdhr
 import db
 
