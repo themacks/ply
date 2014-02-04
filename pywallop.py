@@ -39,6 +39,7 @@ class channels:
         return channels
         
 class favorites:
+    ''' Handles adding and deleting favorite channels '''
     def PUT(self):
         get_data = web.input(channel="")
         print "Adding: "+get_data.channel
@@ -53,6 +54,7 @@ class favorites:
         return
         
 class logo:
+    ''' Handles changing channel logo '''
     def PUT(self):
         get_data = web.input(channel="", logo="")
         print "Setting: "+get_data.channel+" logo to "+get_data.logo
@@ -61,21 +63,25 @@ class logo:
         return
         
 class tune:
+    ''' Tunes HDHR and starts ffmpeg hls process '''
     def POST(self, channel):
         print "Tunning to "+channel
         return "Tuning"
         
 class status:
+    ''' Reports status of HDHR tuning and HLS process '''
     def GET(self, channel):
         print "Status of "+channel
         return "Status"
         
 class stop:
+    ''' Cleans up streaming files and releases tuner '''
     def POST(self, channel):
         print "Stopping "+channel
         return "Stopping"
         
 class stream:
+    ''' redirects to ffmpeg generated .m3u8 file '''
     def GET(self, channel):
         print "Streaming "+channel
         raise web.seeother('/static/streams/'+channel)
@@ -109,5 +115,11 @@ class update:
         channels = db.updateChannels(dbase)
 
 if __name__ == "__main__":
+    # Verify valid database
+    # Verify presence of hdhomerun_config
+    hdhr.cfg.hasHdHrCfg()
+    # Verify presence of ffmpeg
+    hdhr.stream.hasFFMPEG()
+    
     app = web.application(urls, globals())
     app.run()
