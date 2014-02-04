@@ -7,12 +7,15 @@ render = web.template.render('templates/')
 
 urls = (
     '/channels', 'channels',
+    '/channels/favorites', 'favorites',
+    '/channels/logo', 'logo',
     '/setup', 'setup',
     '/update', 'update',
     '/', 'index'
 )
 
 class index:
+    ''' Displays channel list allowing for setting favorites and logos '''
     def GET(self):
         dbase = web.database(dbn="sqlite", db="hdtc.db")
         files = listdir("static/logos/")
@@ -20,6 +23,7 @@ class index:
         return render.index(dbase.select("channels"), logos)
 
 class channels:
+    ''' Retrieves channel lineup in json format for display by roku channel '''
     def GET(self):
         get_data = web.input(type="all")
         
@@ -30,7 +34,30 @@ class channels:
         channels = db.getChannels(dbase, get_data.type)
         return channels
         
+class favorites:
+    def PUT(self):
+        get_data = web.input(channel="")
+        print "Adding: "+get_data.channel
+        dbase = web.database(dbn="sqlite", db="hdtc.db")
+        db.setFavorite(dbase, get_data.channel, True)
+        return
+    def DELETE(self):
+        get_data = web.input(channel="")
+        print "Deleting: "+get_data.channel
+        dbase = web.database(dbn="sqlite", db="hdtc.db")
+        db.setFavorite(dbase, get_data.channel, False)
+        return
+        
+class logo:
+    def PUT(self):
+        get_data = web.input(channel="", logo="")
+        print "Setting: "+get_data.channel+" logo to "+get_data.logo
+        dbase = web.database(dbn="sqlite", db="hdtc.db")
+        db.setLogo(dbase, get_data.channel, get_data.logo[:-4])
+        return
+        
 class setup:
+    ''' Initial setup. Should only be called once or to reset database. '''
     def GET(self):
         # connect to database
         dbase = web.database(dbn="sqlite", db="hdtc.db")

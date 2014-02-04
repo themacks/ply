@@ -80,3 +80,8 @@ def updateChannels(db):
     
     return getChannels(db)
     
+def setFavorite(db, channel, fav):
+    db.update("channels", where="number=$channel", favorite=fav, vars=locals()) 
+    
+def setLogo(db, channel, logo):
+    db.update("channels", where="number=$channel", icon=logo, vars=locals()) 

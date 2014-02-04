@@ -23,10 +23,10 @@ $if channels:
                 if len(channel["icon"]) > 0:
                     icon = "./static/logos/"+channel["icon"]+".png"
             <tr id="$channel["id"]_row" class="$loop.parity">
-                <td><a href="#"><img id="$channel["id"]_fav" width="32px" src="$image" onclick="toggleFavorite('$channel["id"]_fav'); return false;"></a></td>
+                <td><a href="#"><img id="$channel["id"]_fav" width="32px" src="$image" onclick="toggleFavorite('$channel["id"]_fav',$channel["number"]); return false;"></a></td>
                 <td id="$channel["id"]_num">$channel["number"]</td>
                 <td id="$channel["id"]_name">$channel["name"]</td>
-                <td><a href="#"><img id="$channel["id"]_icon" width="32px" src="$icon" onclick="pickLogo('$channel["id"]_icon'); return false;"></a></td>
+                <td><a href="#"><img id="$channel["id"]_icon" width="32px" src="$icon" onclick="pickLogo('$channel["id"]_icon',$channel["number"]); return false;"></a></td>
             </tr>
         </table>
         <div id="fade" class="black_overlay" onclick="cancelLogo();"></div>
