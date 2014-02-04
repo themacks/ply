@@ -9,6 +9,10 @@ urls = (
     '/channels', 'channels',
     '/channels/favorites', 'favorites',
     '/channels/logo', 'logo',
+    '/channels/(.*)/tune', 'tune',
+    '/channels/(.*)/status', 'status',
+    '/channels/(.*)/stop', 'stop',
+    '/channels/(.*)', 'stream',
     '/setup', 'setup',
     '/update', 'update',
     '/', 'index'
@@ -55,6 +59,26 @@ class logo:
         dbase = web.database(dbn="sqlite", db="hdtc.db")
         db.setLogo(dbase, get_data.channel, get_data.logo[:-4])
         return
+        
+class tune:
+    def POST(self, channel):
+        print "Tunning to "+channel
+        return "Tuning"
+        
+class status:
+    def GET(self, channel):
+        print "Status of "+channel
+        return "Status"
+        
+class stop:
+    def POST(self, channel):
+        print "Stopping "+channel
+        return "Stopping"
+        
+class stream:
+    def GET(self, channel):
+        print "Streaming "+channel
+        raise web.seeother('/static/streams/'+channel)
         
 class setup:
     ''' Initial setup. Should only be called once or to reset database. '''
