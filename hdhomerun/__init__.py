@@ -5,7 +5,8 @@ __author__ = [
     "Mark McCarthy <m@themacks.me>"
 ]
 
-import cfg, chan
+import cfg, chan, stream
 
 from cfg import *
 from chan import *
+from stream import *
