@@ -56,9 +56,14 @@ def getChannels(db, type):
     except:
         return None
     
+    addr = "http://"+web.ctx.env['SERVER_NAME']+":"+web.ctx.env['SERVER_PORT']+"/static/logos/"
     chans = []
     for channel in channels:
-        chans.append({"GuideName":channel["name"], "GuideNumber":channel["number"], "LogoUrl":channel["icon"], "Favorite":channel["favorite"]})
+        if len(channel["icon"]) > 0:
+            icon = addr+channel["icon"]+".png"
+        else:
+            icon = addr+"default.png"
+        chans.append({"GuideName":channel["name"], "GuideNumber":channel["number"], "LogoUrl":icon, "Favorite":channel["favorite"]})
     
     return json.dumps(chans)
     

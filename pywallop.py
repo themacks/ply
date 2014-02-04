@@ -1,12 +1,12 @@
 import web
 import hdhomerun as hdhr
 import db
+from os import listdir
 
 render = web.template.render('templates/')
 
 urls = (
     '/channels', 'channels',
-    '/channels/(.*)', 'channels',
     '/setup', 'setup',
     '/update', 'update',
     '/', 'index'
@@ -14,7 +14,10 @@ urls = (
 
 class index:
     def GET(self):
-        return render.index()
+        dbase = web.database(dbn="sqlite", db="hdtc.db")
+        files = listdir("static/logos/")
+        logos = [ f for f in files if f.endswith(".png") ]
+        return render.index(dbase.select("channels"), logos)
 
 class channels:
     def GET(self):
@@ -25,7 +28,6 @@ class channels:
         
         #find all channels
         channels = db.getChannels(dbase, get_data.type)
-
         return channels
         
 class setup:
