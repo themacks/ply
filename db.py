@@ -1,6 +1,7 @@
 import web
 import hdhomerun as hdhr
 import time
+import json
 
 def initConfig(db):
     ''' Initialize the config table. If exists drop and recreate '''
@@ -13,6 +14,7 @@ def initConfig(db):
         db.query(sql_query)
 
 def getConfig(db):
+    ''' returns all config variables in dict '''
     try:
         configs = db.select("config")
     except:
@@ -44,13 +46,21 @@ def initChannels(db):
         #db.query(sql_query)
         pass
         
-def getChannels(db):
+def getChannels(db, type):
+    ''' returns all channes in json for roku channel '''
     try:
-        channels = db.select("channels")
+        if type == "favorites":
+            channels = db.select("channels", where="favorite=1")
+        else:
+            channels = db.select("channels")
     except:
         return None
     
-    return channels
+    chans = []
+    for channel in channels:
+        chans.append({"GuideName":channel["name"], "GuideNumber":channel["number"], "LogoUrl":channel["icon"], "Favorite":channel["favorite"]})
+    
+    return json.dumps(chans)
     
 def updateChannels(db):
     '''Retrieves channel listing from the hdhomerun'''
