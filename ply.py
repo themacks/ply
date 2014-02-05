@@ -65,20 +65,21 @@ class logo:
 class tune:
     ''' Tunes HDHR and starts ffmpeg hls process '''
     def POST(self, channel):
-        print "Tunning to "+channel
-        return "Tuning"
+        pid = hdhr.stream.startStream(channel)
+        print "Tunning to "+channel+", pid: "+str(pid)
         
 class status:
     ''' Reports status of HDHR tuning and HLS process '''
     def GET(self, channel):
+        status = hdhr.stream.getStatus(channel)
         print "Status of "+channel
-        return "Status"
+        print status
         
 class stop:
     ''' Cleans up streaming files and releases tuner '''
     def POST(self, channel):
+        hdhr.stream.stopStream(channel)
         print "Stopping "+channel
-        return "Stopping"
         
 class stream:
     ''' redirects to ffmpeg generated .m3u8 file '''
