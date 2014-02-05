@@ -15,5 +15,5 @@ def getChannels(ipaddr):
         else:
             fav = False
         values.append({"name":channel["GuideName"], "number":channel["GuideNumber"], "favorite":fav, "icon":""})
-    
     return values
+    
