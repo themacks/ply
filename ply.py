@@ -65,7 +65,8 @@ class logo:
 class tune:
     ''' Tunes HDHR and starts ffmpeg hls process '''
     def POST(self, channel):
-        pid = hdhr.stream.startStream(channel)
+        dbase = web.database(dbn="sqlite", db="hdtc.db")
+        pid = hdhr.stream.startStream(channel,db.getConfig(dbase)["ip"])
         print "Tunning to "+channel+", pid: "+str(pid)
         
 class status:
@@ -73,7 +74,7 @@ class status:
     def GET(self, channel):
         status = hdhr.stream.getStatus(channel)
         print "Status of "+channel
-        print status
+        return status
         
 class stop:
     ''' Cleans up streaming files and releases tuner '''

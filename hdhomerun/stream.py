@@ -68,15 +68,13 @@ def stopStream(channel):
     for f in filelist:
         os.remove(f)
     
-def startStream(channel):
+def startStream(channel,ip):
     ''' Starts ffmpeg process for channel, saves pid file '''
     
     streamPath = getPath(channel)
     
-    ip = cfg.getDevice()["ip"]
-    
     #pid = sub.Popen(["ffmpeg", "-i", "./stream/stream.ts", "-vcodec", "copy", "-acodec", "copy", "./static/streams/"+channel+".m3u8"]).pid
-    pid = sub.Popen(["ffmpeg", "-i", "http://"+ip+":5004/auto/v"+channel, "-vcodec", "copy", "-acodec", "copy", channel+".m3u8"]).pid
+    pid = sub.Popen(["ffmpeg", "-i", "http://"+ip+":5004/auto/v"+channel, "-vcodec", "copy", "./static/streams/"+channel+".m3u8"]).pid
     
     with open(streamPath+".pid","w") as f:
             f.write(str(pid))
