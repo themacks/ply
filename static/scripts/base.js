@@ -45,3 +45,17 @@ function setLogo(logo)
     document.getElementById('logoPicker').style.display='none';
     document.getElementById('fade').style.display='none';
 }
+
+function updateDev(dev,action)
+{
+    if(action == "add"){
+        execute('PUT', './device/'+dev);
+        location.reload(true);
+    }else if(action == "delete"){
+        execute('DELETE', './device/'+dev);
+        location.reload(true);
+    }else{
+        execute('GET', './device/'+dev);
+        window.location.href = "http://"+window.location.host;
+    }
+}

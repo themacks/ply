@@ -7,11 +7,34 @@ def hasHdHrCfg():
     except:
         raise OSError("hdhomerun_config not found!")
 
-def getDevice():
+def getDevices():
     '''Finds HDHomeRuns on network'''
-    status = sub.check_output(["hdhomerun_config", "discover"])
-    hdhrid = status.split(" ")[2]
-    hdhrip = status.split(" ")[5].rstrip()
+    try:
+        status = sub.check_output(["hdhomerun_config", "discover"])
+    except:
+        return None
     
-    values = [{"name": "dev", "value": hdhrid}, {"name": "ip", "value": hdhrip}]
+    devices = status.split("\n")
+    
+    values = []
+    for device in devices[:-1]:
+        hddev = device.split(" ")[2]
+        status = sub.check_output(["hdhomerun_config", hddev, "get", "/sys/features"])
+        if status.find("transcode") == -1:
+            trans = False
+        else:
+            trans = True
+        values.append({"dev":hddev, "ip":device.split(" ")[5].rstrip(), "transcode":trans})
     return values
+    
+def getDevice(devId):
+    ''' Returns IP address for specified device '''
+    devices = getDevices()
+    for device in devices:
+        if device["dev"] == devId:
+            return device
+            
+    return None
+    
+def getTunerStatus(devId):
+    pass

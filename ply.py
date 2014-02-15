@@ -1,9 +1,13 @@
 import web
 import hdhomerun as hdhr
 import db
+import json
+import sqlite3
 from os import listdir
 
 render = web.template.render('templates/')
+dbase = web.database(dbn="sqlite", db="hdtc.db")
+dbInit = False
 
 urls = (
     '/channels', 'channels',
@@ -13,43 +17,37 @@ urls = (
     '/channels/(.*)/status', 'status',
     '/channels/(.*)/stop', 'stop',
     '/channels/(.*)', 'stream',
+    '/device/(.*)', 'device',
     '/setup', 'setup',
-    '/update', 'update',
+    '/init', 'init',
     '/', 'index'
 )
 
 class index:
     ''' Displays channel list allowing for setting favorites and logos '''
     def GET(self):
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
         files = listdir("static/logos/")
         logos = [ f for f in files if f.endswith(".png") ]
-        return render.index(dbase.select("channels"), logos)
+        try:
+            channels = dbase.select("channels")
+        except sqlite3.OperationalError:
+            channels = None
+        return render.index(channels, logos)
 
 class channels:
     ''' Retrieves channel lineup in json format for display by roku channel '''
     def GET(self):
         get_data = web.input(type="all")
-        
-        # connect to database
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
-        
-        #find all channels
-        channels = db.getChannels(dbase, get_data.type)
-        return channels
+        return json.dumps(db.getChannels(dbase, get_data.type))
         
 class favorites:
     ''' Handles adding and deleting favorite channels '''
     def PUT(self):
         get_data = web.input(channel="")
-        print "Adding: "+get_data.channel
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
         db.setFavorite(dbase, get_data.channel, True)
         return
     def DELETE(self):
         get_data = web.input(channel="")
-        print "Deleting: "+get_data.channel
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
         db.setFavorite(dbase, get_data.channel, False)
         return
         
@@ -57,67 +55,59 @@ class logo:
     ''' Handles changing channel logo '''
     def PUT(self):
         get_data = web.input(channel="", logo="")
-        print "Setting: "+get_data.channel+" logo to "+get_data.logo
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
         db.setLogo(dbase, get_data.channel, get_data.logo[:-4])
         return
         
 class tune:
     ''' Tunes HDHR and starts ffmpeg hls process '''
     def POST(self, channel):
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
-        pid = hdhr.stream.startStream(channel,db.getConfig(dbase)["ip"])
-        print "Tunning to "+channel+", pid: "+str(pid)
+        get_data = web.input(quality="heavy")
+        devices = db.getDevices(dbase)
+        hdhr.stream.startStream(channel,devices,get_data.quality)
         
 class status:
     ''' Reports status of HDHR tuning and HLS process '''
     def GET(self, channel):
-        status = hdhr.stream.getStatus(channel)
-        print "Status of "+channel
-        return status
+        return hdhr.stream.getStatus(channel)
         
 class stop:
     ''' Cleans up streaming files and releases tuner '''
     def POST(self, channel):
         hdhr.stream.stopStream(channel)
-        print "Stopping "+channel
         
 class stream:
     ''' redirects to ffmpeg generated .m3u8 file '''
     def GET(self, channel):
-        print "Streaming "+channel
         raise web.seeother('/static/streams/'+channel)
-        
+
+class device:
+    ''' Manages devices in database '''
+    def PUT(self,devId):
+        db.addDevice(dbase,devId)
+    def DELETE(self,devId):
+        db.deleteDevice(dbase,devId)
+    def GET(self,devId):
+        db.updateChannels(dbase,devId)
+
 class setup:
-    ''' Initial setup. Should only be called once or to reset database. '''
     def GET(self):
-        # connect to database
-        dbase = web.database(dbn="sqlite", db="hdtc.db")
+        netDevices = hdhr.cfg.getDevices()
+        dbDevices = db.getDevices(dbase)
+        return render.setup(netDevices,dbDevices)
         
-        # initialize config table
-        db.initConfig(dbase)
-        
-        # update configuration
-        config = db.updateConfig(dbase)
-        
+class init:
+    ''' Initial setup of database. Should only be called once or to reset database. '''
+    def GET(self):
         # initialize channels table
         db.initChannels(dbase)
         
-        # update channels
-        channels = db.updateChannels(dbase)
+        # initialize device table
+        db.initDevices(dbase)
         
-        # print out the status page
-        
-class update:
-    def GET(self):
-        # update configuration
-        config = db.updateConfig(dbase)
-        
-        # update channels
-        channels = db.updateChannels(dbase)
+        # redirect to setup page
+        raise web.seeother('/setup')
 
 if __name__ == "__main__":
-    # Verify valid database
     # Verify presence of hdhomerun_config
     hdhr.cfg.hasHdHrCfg()
     # Verify presence of ffmpeg

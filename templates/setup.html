@@ -1,0 +1,47 @@
+$def with (netDevices,dbDevices)
+
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Style-Type" content="text/css">
+        <meta http-equiv="Content-Script-Type" content="text/javascript">
+        <title>Ply - Setup</title>
+        <link rel="icon" type="image/png" href="./static/images/favicon.png">
+        <link href="./static/css/base.css" media="screen" rel="stylesheet">
+        <script src="./static/scripts/base.js"></script>
+    </head>
+    <body>
+        <table class="center">
+        <tr class="topheader">
+            <td colspan=3><h3>Ply - Setup</h3></td>
+            <td><a href="/">home</a></td>
+        </tr>
+        <tr class="header"><td colspan=4>Network Devices</td></tr>
+        $if netDevices:
+            $for device in netDevices:
+                <tr class="$loop.parity">
+                    <td>$device["dev"]</td>
+                    <td><a href='http://$device["ip"]' target="_blank">$device["ip"]</a></td>
+                    $if device["transcode"]:
+                        <td><b>H.264</b></td><td><button class="add" type="button" onClick="updateDev('$device["dev"]','add');">Add</button></td>
+                    $else:
+                        <td colspan=2></td>
+                </tr>
+        $else:
+            <tr class="odd"><td colspan=4>No Network Devices Found</td></tr>
+            
+        <tr class="blockheader"><td colspan=4>Configured Devices</td></tr>
+        $if dbDevices:
+            $for device in dbDevices:
+                <tr class="$loop.parity">
+                    <td >$device["dev"]</td>
+                    <td><a href='http://$device["ip"]' target="_blank">$device["ip"]</a></td>
+                    <td><button class="scan" type="button" onClick="updateDev('$device["dev"]','scan');">Scan</button></td>
+                    <td><button class="del" type="button" onClick="updateDev('$device["dev"]','delete');">Delete</button></td>
+                </tr>
+        $else:
+            <tr class="odd"><td colspan=4>No Setup Devices Found</td></tr>
+        </table>
+    </body>
+</html>

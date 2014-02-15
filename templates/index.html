@@ -1,44 +1,46 @@
 $def with (channels, logos)
 
-$if channels:
-    <!DOCTYPE html>
-    <html lang="en-us">
-        <head>
-            <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-            <meta http-equiv="Content-Style-Type" content="text/css">
-            <meta http-equiv="Content-Script-Type" content="text/javascript">
-            <meta name="viewport" content="width=device-width">
-            <title>Ply</title>
-            <link rel="icon" type="image/png" href="./static/images/favicon.png" />
-            <link href="./static/css/base.css" media="screen" rel="stylesheet">
-            <script src="./static/scripts/base.js"></script>
-        </head>
-        <body>
-        <table class="center">
-        <tr class="header"><td colspan=4><h3>Ply - HDHomerun Channels</h3></td></tr>
-        $for channel in channels:
-            $code:
-                image = "./static/images/heart.png"
-                if channel["favorite"] == 1:
-                    image = "./static/images/heart-filled.png" 
-                icon = "./static/logos/default.png"
-                if len(channel["icon"]) > 0:
-                    icon = "./static/logos/"+channel["icon"]+".png"
-            <tr id="$channel["id"]_row" class="$loop.parity">
-                <td><a href="#"><img class="heart" id="$channel["id"]_fav" width="32px" src="$image" onclick="toggleFavorite('$channel["id"]_fav',$channel["number"]); return false;"></a></td>
-                <td id="$channel["id"]_num">$channel["number"]</td>
-                <td id="$channel["id"]_name">$channel["name"]</td>
-                <td><a href="#"><img class="logo" id="$channel["id"]_icon" width="32px" src="$icon" onclick="pickLogo('$channel["id"]_icon',$channel["number"]); return false;"></a></td>
-            </tr>
-        </table>
-        <div id="fade" class="black_overlay" onclick="cancelLogo();"></div>
-        <div id="logoPicker" class="white_content">
-        $for logo in logos:
-            <a href="#"><img width="64px" src="./static/logos/$logo" onclick="setLogo('$logo'); return false;"></a>
-        </div>
-        </body>
-    </html>
-$else:
-    $# Redirect to setup page since we don't have any channels
-    No channels found
-    
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Style-Type" content="text/css">
+        <meta http-equiv="Content-Script-Type" content="text/javascript">
+        <title>Ply</title>
+        <link rel="icon" type="image/png" href="./static/images/favicon.png">
+        <link href="./static/css/base.css" media="screen" rel="stylesheet">
+        <script src="./static/scripts/base.js"></script>
+    </head>
+    <body>
+    <table class="center">
+    <tr class="header">
+        <td colspan=3><h3>Ply - Channels</h3></td>
+        <td><a href="/setup">setup</a></td></tr>
+    $if channels:
+            $for channel in channels:
+                $code:
+                    image = "./static/images/heart.png"
+                    if channel["favorite"] == 1:
+                        image = "./static/images/heart-filled.png" 
+                    icon = "./static/logos/default.png"
+                    if len(channel["icon"]) > 0:
+                        icon = "./static/logos/"+channel["icon"]+".png"
+                <tr id="$channel["id"]_row" class="$loop.parity">
+                    <td><a href="#"><img class="heart" id="$channel["id"]_fav" width="32px" src="$image" onclick="toggleFavorite('$channel["id"]_fav',$channel["number"]); return false;"></a></td>
+                    <td id="$channel["id"]_num">$channel["number"]</td>
+                    <td id="$channel["id"]_name">$channel["name"]</td>
+                    <td><a href="#"><img class="logo" id="$channel["id"]_icon" width="32px" src="$icon" onclick="pickLogo('$channel["id"]_icon',$channel["number"]); return false;"></a></td>
+                </tr>
+    $else:
+        $if channels == None:
+            <tr class="odd"><td colspan=4><a href="/init">Initialize database.</a></td></tr>
+        $else:
+            <tr class="odd"><td colspan=4><a href="/setup">Scan for channels.</a></td></tr>
+    </table>
+    <div id="fade" class="black_overlay" onclick="cancelLogo();"></div>
+    <div id="logoPicker" class="white_content">
+    $for logo in logos:
+        <a href="#"><img width="64px" src="./static/logos/$logo" onclick="setLogo('$logo'); return false;"></a>
+    </div>
+    </body>
+</html>

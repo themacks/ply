@@ -1,5 +1,4 @@
-body
-{
+body {
     background-color:#d0e4fe;
 }
 
@@ -9,9 +8,13 @@ table.center {
     width:300px;
     border-collapse:collapse;
     border-bottom: 1px solid black;
-  }
+}
 
 tr.header{
+    border-bottom: 1px solid black;
+}
+tr.blockheader{
+    border-top: 1px solid black;
     border-bottom: 1px solid black;
 }
 
@@ -41,35 +44,18 @@ tr.even {
     filter: alpha(opacity=80);
 }
 
-@media all and (max-width: 600px) {
-    .white_content {
-        display: none;
-        position: fixed;
-        top: 25%;
-        left: 25%;
-        width: 50%;
-        height: 50%;
-        padding: 16px;
-        border: 16px solid #FF9933;
-        background-color: #d0e4fe;
-        z-index:1002;
-        overflow: auto;
-    }
-}
-
-@media all and (min-width: 600px) {
-	.white_content {
-        display: none;
-        position: fixed;
-        top: 25%;
-        left: 25%;
-        width: 100%;
-        height: 80%;
-        padding: 5px;
-        border: 5px solid #FF9933;
-        background-color: #d0e4fe;
-        z-index:1002;
-        overflow: auto;
+.white_content {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    padding: 16px;
+    border: 16px solid #FF9933;
+    background-color: #d0e4fe;
+    z-index:1002;
+    overflow: auto;
 }
 
 .heart {
@@ -79,4 +65,19 @@ tr.even {
 
 .logo {
     margin-top: 4px;
+}
+
+.add {
+    width:  4em;  
+    height: 1.75em;
+    margin-left: 5px;
+}
+
+.scan {
+    width:  4em;  
+    height: 1.75em;
+}
+.del {
+    width:  4em;  
+    height: 1.75em;
 }
