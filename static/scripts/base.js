@@ -9,7 +9,7 @@ function execute($method,$url){
     xmlhttp.send(null); 
 } 
 
-function toggleFavorite(id,chan)
+function toggleHeart(id,chan)
 {
     if (endsWith(document.getElementById(id).src,'heart.png')){
         document.getElementById(id).src='./static/images/heart-filled.png';
@@ -17,6 +17,17 @@ function toggleFavorite(id,chan)
     }else{
         document.getElementById(id).src='./static/images/heart.png';
         execute('DELETE', './channels/favorites?channel='+chan);
+    }
+}
+
+function toggleEye(id,chan)
+{
+    if (endsWith(document.getElementById(id).src,'eye.png')){
+        document.getElementById(id).src='./static/images/eye-closed.png';
+        execute('DELETE', './channels/visible?channel='+chan);
+    }else{
+        document.getElementById(id).src='./static/images/eye.png';
+        execute('PUT', './channels/visible?channel='+chan);
     }
 }
 

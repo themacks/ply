@@ -14,28 +14,32 @@ $def with (channels, logos)
     <body>
     <table class="center">
     <tr class="header">
-        <td colspan=3><h3>Ply - Channels</h3></td>
+        <td colspan=4><h3>Ply - Channels</h3></td>
         <td><a href="/setup">setup</a></td></tr>
     $if channels:
             $for channel in channels:
                 $code:
-                    image = "./static/images/heart.png"
+                    fav = "./static/images/heart.png"
                     if channel["favorite"] == 1:
-                        image = "./static/images/heart-filled.png" 
+                        fav = "./static/images/heart-filled.png" 
+                    eye = "./static/images/eye-closed.png"
+                    if channel["visible"] == 1:
+                        eye = "./static/images/eye.png" 
                     icon = "./static/logos/default.png"
                     if len(channel["icon"]) > 0:
                         icon = "./static/logos/"+channel["icon"]+".png"
                 <tr id="$channel["id"]_row" class="$loop.parity">
-                    <td><a href="#"><img class="heart" id="$channel["id"]_fav" width="32px" src="$image" onclick="toggleFavorite('$channel["id"]_fav',$channel["number"]); return false;"></a></td>
+                    <td><a href="#"><img class="heart" id="$channel["id"]_fav" width="32px" src="$fav" onclick="toggleHeart('$channel["id"]_fav','$channel["number"]'); return false;"></a></td>
+                    <td><a href="#"><img class="eye" id="$channel["id"]_eye" width="32px" src="$eye" onclick="toggleEye('$channel["id"]_eye','$channel["number"]'); return false;"></a></td>
                     <td id="$channel["id"]_num">$channel["number"]</td>
                     <td id="$channel["id"]_name">$channel["name"]</td>
                     <td><a href="#"><img class="logo" id="$channel["id"]_icon" width="32px" src="$icon" onclick="pickLogo('$channel["id"]_icon',$channel["number"]); return false;"></a></td>
                 </tr>
     $else:
         $if channels == None:
-            <tr class="odd"><td colspan=4><a href="/init">Initialize database.</a></td></tr>
+            <tr class="odd"><td colspan=5><a href="/init">Initialize database.</a></td></tr>
         $else:
-            <tr class="odd"><td colspan=4><a href="/setup">Scan for channels.</a></td></tr>
+            <tr class="odd"><td colspan=5><a href="/setup">Scan for channels.</a></td></tr>
     </table>
     <div id="fade" class="black_overlay" onclick="cancelLogo();"></div>
     <div id="logoPicker" class="white_content">

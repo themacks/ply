@@ -13,6 +13,7 @@ urls = (
     '/channels', 'channels',
     '/channels/favorites', 'favorites',
     '/channels/logo', 'logo',
+    '/channels/visible', 'visible',
     '/channels/(.*)/tune', 'tune',
     '/channels/(.*)/status', 'status',
     '/channels/(.*)/stop', 'stop',
@@ -49,6 +50,17 @@ class favorites:
     def DELETE(self):
         get_data = web.input(channel="")
         db.setFavorite(dbase, get_data.channel, False)
+        return
+        
+class visible:
+    ''' Handles adding and deleting visible channels '''
+    def PUT(self):
+        get_data = web.input(channel="")
+        db.setVisible(dbase, get_data.channel, True)
+        return
+    def DELETE(self):
+        get_data = web.input(channel="")
+        db.setVisible(dbase, get_data.channel, False)
         return
         
 class logo:

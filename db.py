@@ -51,7 +51,7 @@ def deleteDevice(db, devId):
 
 def initChannels(db):
     ''' Initialize the channels table. If exists drop and recreate '''
-    sql_query = "CREATE TABLE channels (id INTEGER PRIMARY KEY, name TEXT, number TEXT NOT NULL UNIQUE, favorite BOOLEAN, icon TEXT);"
+    sql_query = "CREATE TABLE channels (id INTEGER PRIMARY KEY, name TEXT, number TEXT NOT NULL UNIQUE, favorite BOOLEAN, visible BOOLEAN, icon TEXT);"
     try:
         db.query(sql_query)
     except:
@@ -66,7 +66,7 @@ def getChannels(db, type):
         if type == "favorites":
             channels = db.select("channels", where="favorite=1")
         else:
-            channels = db.select("channels")
+            channels = db.select("channels", where="visible=1")
     except:
         return None
     
@@ -103,6 +103,9 @@ def updateChannels(db, devId):
     
 def setFavorite(db, channel, fav):
     db.update("channels", where="number=$channel", favorite=fav, vars=locals()) 
-    
+
+def setVisible(db, channel, vis):
+    db.update("channels", where="number=$channel", visible=vis, vars=locals())
+   
 def setLogo(db, channel, logo):
     db.update("channels", where="number=$channel", icon=logo, vars=locals()) 
