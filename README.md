@@ -10,7 +10,7 @@ It is specifically designed for streaming to the Roku 3 using the [roku-hdhomeru
 ## Setup
  * Checkout ply to directory of your choice
  * Checkout web.py to ply/webpy or install system wide
+ * Make directory for streams 'mkdir ./static/streams'
  * Start ply with 'python ply.py [port]'
- * Navigate to 'localhost:[port]/setup' to initialize the database
- * Navigate to 'localhost:[port]' and select channel icons
+ * Navigate to 'localhost:[port]' and go through setup
  * Point roku-hdhomerun to ply as a wallop server
