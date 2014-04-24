@@ -15,7 +15,12 @@ def hasFFMPEG():
         raise OSError("ffmpeg not found!")
 
 def getPath(channel):
-    return "./static/streams/"+channel
+    path = "./static/streams/"
+    
+    if os.path.isdir(path) == False:
+        os.mkdir(path)
+
+    return path+channel
 
 def getPid(channel):
     ''' Returns pid for requested channel '''
@@ -71,8 +76,6 @@ def stopStream(channel):
 def startStream(channel,devices,quality):
     ''' Finds available tuner and starts ffmpeg process for channel, saves pid file '''
     
-    print devices
-    
     #Check for available tuner 
     for device in devices:
         status = cfg.getTunerStatus(device["dev"])
@@ -81,7 +84,7 @@ def startStream(channel,devices,quality):
     
     streamPath = getPath(channel)
     
-    #pid = sub.Popen(["ffmpeg", "-i", "./stream/stream.ts", "-vcodec", "copy", "-acodec", "copy", "./static/streams/"+channel+".m3u8"]).pid
+    # ffmpeg -i ./stream/stream.ts -vcodec copy -acodec copy ./static/streams/"+channel+".m3u8"
     pid = sub.Popen(["ffmpeg", "-i", "http://"+ip+":5004/auto/v"+channel+"?transcode="+quality, "-vcodec", "copy", "./static/streams/"+channel+".m3u8"]).pid
     
     with open(streamPath+".pid","w") as f:
