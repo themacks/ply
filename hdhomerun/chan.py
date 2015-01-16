@@ -10,9 +10,12 @@ def getChannels(ipaddr):
     values = []
     
     for channel in channels:
-        if channel["Tags"] == "favorite":
-            fav = True
-        else:
+        try:
+            if channel["Favorite"]:
+                fav = True
+            else: 
+                fav = False
+        except KeyError:
             fav = False
         values.append({"name":channel["GuideName"], "number":channel["GuideNumber"], "favorite":fav, "visible":True, "icon":""})
     return values
